@@ -12,7 +12,7 @@ jobs:
   tests:
     strategy:
       fail-fast: false
-      matrixn:
+      matrix:
         node-version: [20]
         runner:
           - name: Windows
