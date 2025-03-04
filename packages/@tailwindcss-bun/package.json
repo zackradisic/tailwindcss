@@ -28,9 +28,9 @@
     }
   },
   "dependencies": {
-    "@tailwindcss/node": "workspace:^",
-    "@tailwindcss/oxide": "workspace:^",
-    "tailwindcss": "workspace:*"
+    "@tailwindcss/node": "4.0.9",
+    "@tailwindcss/oxide": "workspace:*",
+    "tailwindcss": "4.0.9"
   },
   "devDependencies": {
     "@types/bun": "1.2.2",
