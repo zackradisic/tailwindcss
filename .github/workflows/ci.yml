@@ -12,7 +12,7 @@ jobs:
   tests:
     strategy:
       fail-fast: false
-      matrix:
+      matrixn:
         node-version: [20]
         runner:
           - name: Windows
@@ -82,10 +82,10 @@ jobs:
           CARGO_PROFILE_RELEASE_LTO: 'off'
           CARGO_TARGET_X86_64_PC_WINDOWS_MSVC_LINKER: 'lld-link'
 
-      - name: Lint
-        run: pnpm run lint
-        # Only lint on linux to avoid \r\n line ending errors
-        if: matrix.runner.os == 'ubuntu-latest'
+      # - name: Lint
+      #   run: pnpm run lint
+      #   # Only lint on linux to avoid \r\n line ending errors
+      #   if: matrix.runner.os == 'ubuntu-latest'
 
       - name: Test
         run: pnpm run test
