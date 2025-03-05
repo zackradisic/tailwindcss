@@ -1,5 +1,5 @@
 {
-  "name": "@tailwindcss/bun",
+  "name": "bun-plugin-tailwind",
   "version": "4.0.1",
   "description": "A utility-first CSS framework for rapidly building custom user interfaces.",
   "license": "MIT",
@@ -23,16 +23,12 @@
   },
   "exports": {
     ".": {
-      "types": "./dist/index.d.mts",
-      "import": "./dist/index.mjs"
+      "types": "./index.d.mts",
+      "import": "./index.js"
     }
   },
   "dependencies": {
     "@tailwindcss/node": "4.0.9",
-    "@tailwindcss/oxide": "file:///Users/zackradisic/Code/tailwind-pr/dist/tailwindcss-oxide.tgz",
-    "tailwindcss": "4.0.9"
-  },
-  "devDependencies": {
-    "@types/bun": "1.2.2"
+    "tailwindcss": "4.0.9,"
   }
 }

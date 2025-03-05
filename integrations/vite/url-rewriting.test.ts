@@ -1,5 +1,5 @@
 import { describe } from 'vitest'
-import { binary, css, html, svg, test, ts, txt } from '../utils'
+import { binary, css, html, test, ts, txt } from '../utils'
 
 const SIMPLE_IMAGE = `iVBORw0KGgoAAAANSUhEUgAAADAAAAAlAQAAAAAsYlcCAAAACklEQVR4AWMYBQABAwABRUEDtQAAAABJRU5ErkJggg==`
 
@@ -27,10 +27,7 @@ describe.each(['postcss', 'lightningcss'])('%s', (transformer) => {
 
           export default defineConfig({
             plugins: [tailwindcss()],
-            build: {
-              assetsInlineLimit: 256,
-              cssMinify: false,
-            },
+            build: { assetsInlineLimit: 256, cssMinify: false },
             css: ${transformer === 'postcss' ? '{}' : "{ transformer: 'lightningcss' }"},
           })
         `,
@@ -38,6 +35,7 @@ describe.each(['postcss', 'lightningcss'])('%s', (transformer) => {
           <!doctype html>
           <html>
             <head>
+              Couldn't find plugin for AST format "xml"
               <link rel="stylesheet" href="./src/app.css" />
             </head>
             <body>
@@ -68,7 +66,7 @@ describe.each(['postcss', 'lightningcss'])('%s', (transformer) => {
           }
         `,
         'resources/image.png': binary(SIMPLE_IMAGE),
-        'resources/vector.svg': svg`
+        'resources/vector.svg': `
           <svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
             <rect width="100%" height="100%" fill="red" />
             <circle cx="200" cy="100" r="80" fill="green" />

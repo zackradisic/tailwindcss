@@ -1,6 +1,6 @@
 import os from 'node:os'
 import path from 'node:path'
-import { candidate, css, html, js, json, test } from '../utils'
+import { candidate, css, html, js, json, test, ts } from '../utils'
 
 const STANDALONE_BINARY = (() => {
   switch (os.platform()) {
@@ -20,12 +20,7 @@ test(
   {
     fs: {
       'package.json': json`
-        {
-          "dependencies": {
-            "tailwindcss": "workspace:^",
-            "@tailwindcss/cli": "workspace:^"
-          }
-        }
+        { "dependencies": { "tailwindcss": "workspace:^", "@tailwindcss/cli": "workspace:^" } }
       `,
       'index.html': html`
         <div className="prose">
@@ -61,11 +56,7 @@ test(
   'includes js APIs for plugins',
   {
     fs: {
-      'package.json': json`
-        {
-          "dependencies": {}
-        }
-      `,
+      'package.json': json` { "dependencies": {} } `,
       'index.html': html`
         <div class="underline example1 example2 example3"></div>
       `,
@@ -122,7 +113,7 @@ test(
           })
         })
       `,
-      'src/plugin.ts': js`
+      'src/plugin.ts': ts`
         import plugin from 'tailwindcss/plugin'
 
         // Make sure all available JS APIs can be imported and used
@@ -132,8 +123,7 @@ test(
         import defaultTheme from 'tailwindcss/defaultTheme'
         import * as pkg from 'tailwindcss/package.json'
 
-        export interface PluginOptions {
-        }
+        export interface PluginOptions {}
 
         export default plugin(function ({ addUtilities }) {
           addUtilities({

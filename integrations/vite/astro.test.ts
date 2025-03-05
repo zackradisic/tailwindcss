@@ -93,9 +93,7 @@ test(
         export default defineConfig({ vite: { plugins: [tailwindcss()] }, integrations: [react()] })
       `,
       'src/pages/index.astro': html`
-        ---
-        import ClientOnly from './client-only';
-        ---
+        --- import ClientOnly from './client-only'; ---
 
         <div class="underline">Hello, world!</div>
 
