@@ -10,7 +10,7 @@
     "moduleResolution": "Bundler",
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": false,
-    "isolatedModules": true,
+    "isolatedModules": false,
     "preserveConstEnums": true,
     "noEmit": true,
 

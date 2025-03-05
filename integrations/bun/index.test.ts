@@ -14,6 +14,11 @@ import {
   yaml,
 } from '../utils'
 
+// const bun_plugin_loc =
+//   'file:///Users/zackradisic/Code/tailwind-pr/packages/@tailwindcss-bun/dist-pkg'
+// const bun_plugin_loc = 'workspace:*'
+const bun_plugin_loc = 'file:/Users/zackradisic/Code/tailwind-pr/bun.tgz'
+
 let port = 49000 + Math.floor(Math.random() * 1000)
 
 const bunServer = (routes: Record<string, { import: string; path: string }>) => ts/* ts */ `
@@ -73,7 +78,7 @@ describe('Bun', () => {
             {
               "type": "module",
               "dependencies": {
-                "@tailwindcss/bun": "workspace:^",
+                "@tailwindcss/bun": "${bun_plugin_loc}",
                 "tailwindcss": "workspace:^"
               },
               "devDependencies": {
@@ -148,7 +153,7 @@ describe('Bun', () => {
             {
               "type": "module",
               "dependencies": {
-                "@tailwindcss/bun": "workspace:^",
+                "@tailwindcss/bun": "${bun_plugin_loc}",
                 "tailwindcss": "workspace:^"
               }
             }
@@ -198,7 +203,7 @@ describe('Bun', () => {
       },
     },
     async ({ root, spawn, fs, expect }) => {
-      let process = await spawn(`bun serve.ts`, {
+      let process = await spawn(`BUN_DEBUG_QUIET_LOGS=1 bun-debug serve.ts`, {
         cwd: path.join(root, 'project-a'),
         env: {
           PORT: `${port++}`,
@@ -226,6 +231,7 @@ describe('Bun', () => {
       // candidates from about.html.
       await retryAssertion(async () => {
         let styles = await fetchStyles(url, '/about')
+        console.log('THE STYLES', styles)
         expect(styles).toContain(candidate`underline`)
         expect(styles).toContain(candidate`flex`)
         expect(styles).toContain(candidate`font-bold`)
@@ -312,7 +318,7 @@ describe('Bun', () => {
             {
               "type": "module",
               "dependencies": {
-                "@tailwindcss/bun": "workspace:^",
+                "@tailwindcss/bun": "${bun_plugin_loc}",
                 "tailwindcss": "workspace:^"
               }
             }
@@ -547,7 +553,7 @@ describe('Bun', () => {
             {
               "type": "module",
               "dependencies": {
-                "@tailwindcss/bun": "workspace:^",
+                "@tailwindcss/bun": "${bun_plugin_loc}",
                 "tailwindcss": "workspace:^"
               }
             }
@@ -629,7 +635,7 @@ describe('Bun', () => {
             {
               "type": "module",
               "dependencies": {
-                "@tailwindcss/bun": "workspace:^",
+                "@tailwindcss/bun": "${bun_plugin_loc}",
                 "tailwindcss": "workspace:^"
               }
             }
@@ -727,7 +733,7 @@ describe('Bun', () => {
             {
               "type": "module",
               "dependencies": {
-                "@tailwindcss/bun": "workspace:^",
+                "@tailwindcss/bun": "${bun_plugin_loc}",
                 "tailwindcss": "workspace:^"
               },
               "devDependencies": {

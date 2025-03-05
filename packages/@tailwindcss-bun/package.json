@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@tailwindcss/node": "4.0.9",
-    "@tailwindcss/oxide": "file:///Users/zackradisic/Code/tailwind-pr/dist/tailwindcss-oxide.tgz",
+    "@tailwindcss/oxide": "file:///Users/zackradisic/Code/tailwind-pr/crates/node",
     "tailwindcss": "4.0.9"
   },
   "devDependencies": {

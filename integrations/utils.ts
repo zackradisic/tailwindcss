@@ -75,7 +75,7 @@ export function test(
   name: string,
   config: TestConfig,
   testCallback: TestCallback,
-  { only = false, skip = false, debug = false }: TestFlags = {},
+  { only = false, skip = false, debug = true }: TestFlags = {},
 ) {
   return defaultTest(
     name,
