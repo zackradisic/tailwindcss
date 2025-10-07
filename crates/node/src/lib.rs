@@ -3,6 +3,7 @@ use std::sync::{atomic::AtomicBool, Mutex};
 
 use bun_native_plugin::{anyhow, bun, define_bun_plugin, Error, Result};
 use fxhash::{FxHashMap, FxHashSet};
+use napi::bindgen_prelude::{ExternalRef, Object};
 use napi::{
   bindgen_prelude::{Array, External},
   Env, Result as NapiResult,
@@ -215,13 +216,16 @@ define_bun_plugin!("tailwindcss");
 /// Create the TailwindContextExternal and return it to JS wrapped in a Napi External.
 #[no_mangle]
 #[napi]
-pub fn twctx_create() -> External<TailwindContextExternal> {
-  let external = External::new(TailwindContextExternal {
-    module_graph_candidates: Default::default(),
-    dirty: AtomicBool::new(false),
-  });
+pub fn twctx_create(env: &Env) -> NapiResult<ExternalRef<TailwindContextExternal>> {
+  let external = ExternalRef::new(
+    env,
+    TailwindContextExternal {
+      module_graph_candidates: Default::default(),
+      dirty: AtomicBool::new(false),
+    },
+  )?;
 
-  external
+  Ok(external)
 }
 
 #[napi(object)]
@@ -234,7 +238,7 @@ struct CandidatesEntry {
 /// use it.
 #[no_mangle]
 #[napi]
-pub fn twctx_to_js(env: Env, ctx: External<TailwindContextExternal>) -> NapiResult<Array> {
+pub fn twctx_to_js(env: &Env, ctx: ExternalRef<TailwindContextExternal>) -> NapiResult<Array> {
   let candidates = ctx.module_graph_candidates.lock().map_err(|_| {
     napi::Error::new(
       napi::Status::WouldDeadlock,
@@ -260,7 +264,7 @@ pub fn twctx_to_js(env: Env, ctx: External<TailwindContextExternal>) -> NapiResu
   // However, it is unclear how much of a performance difference this makes as this array will
   // get turned into a set inside the corresponding JS code.
   for (i, (id, candidates)) in candidates.iter().enumerate() {
-    let mut obj = env.create_object()?;
+    let mut obj = Object::new(env)?;
     obj.set("id", id)?;
     obj.set("candidates", candidates.iter().collect::<Vec<_>>())?;
     arr.set(i as u32, obj)?;
@@ -273,7 +277,7 @@ pub fn twctx_to_js(env: Env, ctx: External<TailwindContextExternal>) -> NapiResu
 /// then call `twctx_to_js` to convert the candidates into JS values.
 #[no_mangle]
 #[napi]
-pub fn twctx_is_dirty(_env: Env, ctx: External<TailwindContextExternal>) -> NapiResult<bool> {
+pub fn twctx_is_dirty(_env: Env, ctx: ExternalRef<TailwindContextExternal>) -> NapiResult<bool> {
   Ok(ctx.dirty.load(std::sync::atomic::Ordering::Acquire))
 }
 

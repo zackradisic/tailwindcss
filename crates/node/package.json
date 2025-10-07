@@ -19,10 +19,8 @@
       "aarch64-unknown-linux-musl",
       "armv7-unknown-linux-gnueabihf",
       "x86_64-unknown-linux-musl",
-      "x86_64-unknown-freebsd",
       "i686-pc-windows-msvc",
-      "aarch64-pc-windows-msvc",
-      "wasm32-wasip1-threads"
+      "aarch64-pc-windows-msvc"
     ],
     "wasm": {
       "initialMemory": 16384,
@@ -54,9 +52,10 @@
     "access": "public"
   },
   "scripts": {
-    "build": "pnpm run build:platform && pnpm run build:wasm",
+    "//build": "pnpm run build:platform && pnpm run build:wasm",
+    "build": "pnpm run build:platform",
     "build:platform": "napi build --platform --release",
-    "postbuild:platform": "node ./scripts/move-artifacts.mjs",
+    "postbuild:platform": "node ./scripts/move-artifacts.mjs && node ./export_native_binding.js",
     "build:wasm": "napi build --release --target wasm32-wasip1-threads",
     "postbuild:wasm": "node ./scripts/move-artifacts.mjs",
     "dev": "cargo watch --quiet --shell 'npm run build'",

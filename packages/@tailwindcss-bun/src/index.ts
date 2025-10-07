@@ -1,13 +1,6 @@
-import {
-  compile,
-  env,
-  Features,
-  Instrumentation,
-  normalizePath,
-  optimize,
-} from '@tailwindcss/node'
+import { compile, env, Features, Instrumentation, normalizePath, optimize } from '@tailwindcss/node'
 import { clearRequireCache } from '@tailwindcss/node/require-cache'
-import { nativeBinding, Scanner, twctxCreate, twctxIsDirty, twctxToJs } from '@tailwindcss/oxide'
+import { napiModule, Scanner, twctxCreate, twctxIsDirty, twctxToJs } from '@tailwindcss/oxide'
 import type { BunPlugin } from 'bun'
 import fs from 'node:fs/promises'
 import path from 'node:path'
@@ -21,7 +14,7 @@ const INLINE_STYLE_ID_RE = /[?&]index\=\d+\.css$/
 const NON_CSS_ROOT_FILE_RE =
   /(?:\/\.bun\/|(?!\.css$|\.vue\?.*&lang\.css|\.astro\?.*&lang\.css|\.svelte\?.*&lang\.css).*|\?(?:raw|url)\b)/
 
-const addon = nativeBinding
+const addon = napiModule
 
 const plugin: BunPlugin = {
   name: '@tailwindcss/bun',
@@ -69,11 +62,7 @@ const plugin: BunPlugin = {
       // Wait until the native plugin has scanned all files in the module graph
       await defer()
 
-      let result = await root.generate(
-        sourceContents,
-        () => getSharedCandidates(),
-        I,
-      )
+      let result = await root.generate(sourceContents, () => getSharedCandidates(), I)
 
       if (!result) {
         roots.delete(inputPath)
@@ -82,6 +71,15 @@ const plugin: BunPlugin = {
       }
 
       DEBUG && I.end('[@tailwindcss/bun] Generate CSS')
+
+      const doOptimization = false
+
+      // Bun already optimizes CSS code
+      if (!doOptimization)
+        return {
+          contents: result.code,
+          loader: 'css',
+        }
 
       // Optimize the CSS (minification, etc.)
       DEBUG && I.start('[@tailwindcss/bun] Optimize CSS')
@@ -134,6 +132,7 @@ class Root {
   // the lifetime of the root.
   private candidates: Set<string> = new Set<string>()
 
+  // TODO: this is not needed for Bun plugin, need to verify though for the dev server
   // List of all build dependencies (e.g. imported stylesheets or plugins) and
   // their last modification timestamp. If no mtime can be found, we need to
   // assume the file has always changed.
@@ -252,9 +251,7 @@ class Root {
     }
   }
 
-  private getModuleGraphCandidates(
-    sharedCandidates: Map<string, Set<string>>,
-  ): Set<string> {
+  private getModuleGraphCandidates(sharedCandidates: Map<string, Set<string>>): Set<string> {
     if (this.compiler?.root === 'none') return new Set()
 
     const HAS_DRIVE_LETTER = /^[A-Z]:/
@@ -262,7 +259,7 @@ class Root {
     let basePath: string | null = null
     let root = this.compiler?.root
 
-    if (root !== 'none' && root !== null && root !== undefined) {
+    if (root !== null && root !== undefined) {
       basePath = normalizePath(path.resolve(root.base, root.pattern))
     }
 
