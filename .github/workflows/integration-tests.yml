@@ -129,7 +129,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        bun-version: [1.2.2]
+        bun-version: [1.2.23]
         runner:
           - name: Windows
             os: windows-latest
