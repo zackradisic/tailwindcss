@@ -2,6 +2,13 @@
   "name": "@tailwindcss/root",
   "private": true,
   "version": "1.0.0",
+  "workspaces": [
+    "crates/node",
+    "crates/node/npm/*",
+    "packages/*",
+    "playgrounds/*",
+    "integrations"
+  ],
   "prettier": {
     "semi": false,
     "singleQuote": true,

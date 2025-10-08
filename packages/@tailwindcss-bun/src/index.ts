@@ -16,9 +16,12 @@ const NON_CSS_ROOT_FILE_RE =
 
 const addon = napiModule
 
+export const isWindows = typeof process !== 'undefined' && process.platform === 'win32'
+
 const plugin: BunPlugin = {
   name: '@tailwindcss/bun',
   setup(build) {
+    const projectRoot = normalizePath(build.config?.root ?? process.cwd())
     // Create external state for native plugin to share candidates
     const external = twctxCreate()
 
@@ -53,7 +56,7 @@ const plugin: BunPlugin = {
       // Get or create Root instance for this CSS file
       let root = roots.get(inputPath)
       if (!root) {
-        root = new Root(inputPath)
+        root = new Root(inputPath, projectRoot)
         roots.set(inputPath, root)
       }
 
@@ -138,7 +141,10 @@ class Root {
   // assume the file has always changed.
   private buildDependencies = new Map<string, number | null>()
 
-  constructor(private id: string) {}
+  constructor(
+    private id: string,
+    private base: string,
+  ) {}
 
   // Generate the CSS for the root file. This can return false if the file is
   // not considered a Tailwind root. When this happened, the root can be GCed.
@@ -186,9 +192,8 @@ class Root {
           return []
         }
 
-        // No root specified, auto-detect based on the current working directory
         if (this.compiler.root === null) {
-          return [{ base: process.cwd(), pattern: '**/*', negated: false }]
+          return [{ base: this.base, pattern: '**/*', negated: false }]
         }
 
         // Use the specified root
