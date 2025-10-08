@@ -147,49 +147,49 @@ jobs:
           name: bindings-${{ matrix.target }}
           path: ${{ env.OXIDE_LOCATION }}/*.node
 
-  build-freebsd:
-    name: Build x86_64-unknown-freebsd (OXIDE)
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@v4
-      - name: Build FreeBSD
-        uses: cross-platform-actions/action@v0.25.0
-        env:
-          DEBUG: napi:*
-          RUSTUP_HOME: /usr/local/rustup
-          CARGO_HOME: /usr/local/cargo
-          RUSTUP_IO_THREADS: 1
-          RUST_TARGET: x86_64-unknown-freebsd
-        with:
-          operating_system: freebsd
-          version: '14.0'
-          memory: 13G
-          cpu_count: 3
-          environment_variables: 'DEBUG RUSTUP_IO_THREADS'
-          shell: bash
-          run: |
-            sudo pkg install -y -f curl node libnghttp2 npm
-            sudo npm install -g pnpm@9.6.0 --unsafe-perm=true
-            curl -sSf https://static.rust-lang.org/rustup/archive/1.27.1/x86_64-unknown-freebsd/rustup-init --output rustup-init
-            chmod +x rustup-init
-            ./rustup-init -y --profile minimal
-            source "$HOME/.cargo/env"
-            echo "~~~~ rustc --version ~~~~"
-            rustc --version
-            echo "~~~~ node -v ~~~~"
-            node -v
-            echo "~~~~ pnpm --version ~~~~"
-            pnpm --version
-            pnpm install --ignore-scripts --filter=!./playgrounds/* || true
-            pnpm run --filter ${{ env.OXIDE_LOCATION }} build:platform
-            strip -x ${{ env.OXIDE_LOCATION }}/*.node
-            ls -la ${{ env.OXIDE_LOCATION }}
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: bindings-x86_64-unknown-freebsd
-          path: ${{ env.OXIDE_LOCATION }}/*.node
+  # build-freebsd:
+  #   name: Build x86_64-unknown-freebsd (OXIDE)
+  #   runs-on: ubuntu-latest
+  #   timeout-minutes: 15
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Build FreeBSD
+  #       uses: cross-platform-actions/action@v0.25.0
+  #       env:
+  #         DEBUG: napi:*
+  #         RUSTUP_HOME: /usr/local/rustup
+  #         CARGO_HOME: /usr/local/cargo
+  #         RUSTUP_IO_THREADS: 1
+  #         RUST_TARGET: x86_64-unknown-freebsd
+  #       with:
+  #         operating_system: freebsd
+  #         version: '14.0'
+  #         memory: 13G
+  #         cpu_count: 3
+  #         environment_variables: 'DEBUG RUSTUP_IO_THREADS'
+  #         shell: bash
+  #         run: |
+  #           sudo pkg install -y -f curl node libnghttp2 npm
+  #           sudo npm install -g pnpm@9.6.0 --unsafe-perm=true
+  #           curl -sSf https://static.rust-lang.org/rustup/archive/1.27.1/x86_64-unknown-freebsd/rustup-init --output rustup-init
+  #           chmod +x rustup-init
+  #           ./rustup-init -y --profile minimal
+  #           source "$HOME/.cargo/env"
+  #           echo "~~~~ rustc --version ~~~~"
+  #           rustc --version
+  #           echo "~~~~ node -v ~~~~"
+  #           node -v
+  #           echo "~~~~ pnpm --version ~~~~"
+  #           pnpm --version
+  #           pnpm install --ignore-scripts --filter=!./playgrounds/* || true
+  #           pnpm run --filter ${{ env.OXIDE_LOCATION }} build:platform
+  #           strip -x ${{ env.OXIDE_LOCATION }}/*.node
+  #           ls -la ${{ env.OXIDE_LOCATION }}
+  #     - name: Upload artifacts
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: bindings-x86_64-unknown-freebsd
+  #         path: ${{ env.OXIDE_LOCATION }}/*.node
 
   release:
     runs-on: macos-14
@@ -203,7 +203,7 @@ jobs:
 
     needs:
       - build
-      - build-freebsd
+      # - build-freebsd
 
     steps:
       - uses: actions/checkout@v4
